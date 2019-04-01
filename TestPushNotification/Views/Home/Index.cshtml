@@ -1,0 +1,30 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+@section scripts{
+    <script>
+        (function() {
+            $.connection.hub.start()
+            .done(function() {
+                console.log("It worked");
+                //call server side method
+                $.connection.myHub.server.announce("Conencted");
+                //MyHub = myHub.. camel case
+                //myHub = name of the server side hub class
+                //announce = name of the server side function
+            })
+            .fail(function() {
+                alert("ERROR");
+            });
+
+        $.connection.myHub.client.announce = function(message) {
+            $("#name").append(message + "<br />");
+        }
+        })();
+    </script>
+}
+
+
+<h1>Hello</h1>
+<div id="name"></div>

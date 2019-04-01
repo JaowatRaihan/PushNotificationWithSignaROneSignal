@@ -1,0 +1,81 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <script type="text/javascript" src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.signalR-2.4.0.min.js"></script>
+    @*<script type="text/javascript" src="~/signalr/hubs"></script>*@
+    <script src="~/signalr/js"></script>
+    <script type="text/javascript">
+
+        $(function () {
+            // Declare a proxy to reference the hub.
+            var notifications = $.connection.myHub;
+            notifications.client.notify = function (msg) {
+                console.log(msg);
+                getAllMessages();
+            };
+            $.connection.hub.start().done(function () {
+                alert("connection started");
+                getAllMessages();
+            }).fail(function (e) {
+                alert(e);
+            });
+        });
+
+        function getAllMessages() {
+            var tbl = $('#messagesTable');
+            $.ajax({
+                url: '/Notifications/GetMessages',
+                contentType: 'application/html ; charset:utf-8',
+                type: 'GET',
+                dataType: 'html'
+            }).done(function(result) {
+                var a2 = JSON.parse(result);
+                tbl.empty();
+                $.each(a2,
+                    function(key, value) {
+                        tbl.append('<tr>' +
+                            '<td>' +
+                            value.ID +
+                            '</td>' +
+                            '<td>' +
+                            value.UserID +
+                            '</td>' +
+                            '<td>' +
+                            value.Message +
+                            '</td>' +
+                            '</tr>');
+                    });
+            });
+        }
+    </script>
+</head>
+<body>
+    <div>
+        <table id="tab"></table>
+    </div><br />
+    <div class="row">
+        <div class="col-md-12">
+            <div>
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User ID</th>
+                            <th>Message</th>
+                        </tr>
+                    </thead>
+                    <tbody id="messagesTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
